@@ -1,6 +1,293 @@
-<kendo-grid [data]="data">
-    <kendo-grid-column field="creature_name" title="Name"></kendo-grid-column>
-    <kendo-grid-column field="armor_class" title="AC"></kendo-grid-column>
-    <kendo-grid-column field="max_hitpoints" title="Max HP"></kendo-grid-column>
-    <kendo-grid-column field="current_hitpoints" title="Current HP"></kendo-grid-column>
-</kendo-grid>
+<div *ngIf="selectedCreature == undefined && !newCreatureMode">
+    <kendo-grid [data]="data">
+        <kendo-grid-column field="creature_name" title="Name">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <div (click)="selectCreature(dataItem)">{{dataItem.creature_name}}</div>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="armor_class" title="AC"></kendo-grid-column>
+        <kendo-grid-column field="max_hitpoints" title="Max HP"></kendo-grid-column>
+        <kendo-grid-column field="current_hitpoints" title="Current HP"></kendo-grid-column>
+        <kendo-grid-column title="">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <button kendoButton (click)="deleteCreature(dataItem)">Delete</button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>
+
+<div *ngIf="selectedCreature != undefined && !newCreatureMode">
+    <form class="k-form" [formGroup]="editCreatureForm">
+        <fieldset class="k-form-fieldset">
+            <legend class="k-form-legend">Edit Creature Data</legend>
+            <kendo-formfield>
+                <kendo-label>Creature Name</kendo-label>
+                    <input formControlName="creatureName" kendoTextBox #creatureName required>
+                    <kendo-formerror>Error: Creature Name is required</kendo-formerror>
+            </kendo-formfield>
+
+            <kendo-formfield>
+                <kendo-label>Race</kendo-label>
+                    <kendo-autocomplete formControlName="race" [data]="raceNames" [(ngModel)]="selectedCreatureRace" #race required></kendo-autocomplete>
+                    <kendo-formerror>Error: Creature Race is required</kendo-formerror>
+            </kendo-formfield>
+
+            <kendo-formfield>
+                <kendo-label>Background</kendo-label>
+                    <kendo-autocomplete formControlName="background" [data]="backgroundNames" [(ngModel)]="selectedCreatureBackground" #background required></kendo-autocomplete>
+                    <kendo-formerror>Error: Creature Background is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Creature Type</kendo-label>
+                    <kendo-autocomplete formControlName="creatureType" [data]="creatureTypeNames" [(ngModel)]="selectedCreatureType" #creatureType required></kendo-autocomplete>
+                    <kendo-formerror>Error: Creature Type is required</kendo-formerror>
+            </kendo-formfield>
+
+            <kendo-formfield>
+                <kendo-label>Creature Size</kendo-label>
+                    <kendo-autocomplete formControlName="creatureSize" [data]="creatureSizeNames" [(ngModel)]="selectedCreatureSize" #creatureSize required></kendo-autocomplete>
+                    <kendo-formerror>Error: Creature Size is required</kendo-formerror>
+            </kendo-formfield>
+
+            <kendo-formfield>
+                <kendo-label>Armor Class</kendo-label>
+                    <kendo-numerictextbox formControlName="armorClass" #armorClass required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Armor Class is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Armor Class Type</kendo-label>
+                <kendo-textbox formControlName="acType" #acType></kendo-textbox>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Challenge Rating</kendo-label>
+                <kendo-numerictextbox formControlName="challengeRating" #challengeRating></kendo-numerictextbox>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Max Hitpoints</kendo-label>
+                    <kendo-numerictextbox formControlName="maxHitpoints" #maxHitpoints required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Max Hitpoints are required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Current Hitpoints</kendo-label>
+                    <kendo-numerictextbox formControlName="currentHitpoints" #currentHitpoints required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Current Hitpoints are required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Temporary Hitpoints</kendo-label>
+                    <kendo-numerictextbox formControlName="temporaryHitpoints" #temporaryHitpoints required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Temporary Hitpoints are required</kendo-formerror>
+            </kendo-formfield>
+
+            <kendo-formfield>
+                <kendo-label>Expended Hitdie</kendo-label>
+                    <input formControlName="expendedHitDie" expendedHitdie #creatureName required>
+                    <kendo-formerror>Error: Expended Hitdie is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Speed</kendo-label>
+                    <kendo-numerictextbox formControlName="speed" #speed required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Speed is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Flying Speed</kendo-label>
+                    <kendo-numerictextbox formControlName="flySpeed" #flySpeed required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Fly Speed is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Climb Speed</kendo-label>
+                    <kendo-numerictextbox formControlName="climbSpeed" #climbSpeed required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Speed is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Swim Speed</kendo-label>
+                    <kendo-numerictextbox formControlName="swimSpeed" #swimSpeed required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Swim Speed is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Strength Score</kendo-label>
+                    <kendo-numerictextbox formControlName="strScore" #strScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Strength Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Dexterity Score</kendo-label>
+                    <kendo-numerictextbox formControlName="dexScore" #dexScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Dexterity Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Constitution Score</kendo-label>
+                    <kendo-numerictextbox formControlName="conScore" #conScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Constitution Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Intelligence Score</kendo-label>
+                    <kendo-numerictextbox formControlName="intScore" #intScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Intelligence Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Wisdom Score</kendo-label>
+                    <kendo-numerictextbox formControlName="wisScore" #wisScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Wisdom Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Charisma Score</kendo-label>
+                    <kendo-numerictextbox formControlName="chaScore" #chaScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Charisma Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Passed Death Saves</kendo-label>
+                    <kendo-numerictextbox formControlName="passedDeathSaves" #passedDeathSaves required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Passed Death Saves is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Failed Death Saves</kendo-label>
+                    <kendo-numerictextbox formControlName="failedDeathSaves" #failedDeathSaves required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Failed Death Saves is required</kendo-formerror>
+            </kendo-formfield>
+            
+        </fieldset>
+    </form>
+    <button kendoButton (click)="updateCreature()">Update</button>
+    <button kendoButton (click)="leaveEditCreatureMode()">Cancel</button>    
+</div>
+
+<div *ngIf="newCreatureMode">
+    <form class="k-form" [formGroup]="newCreatureForm">
+        <fieldset class="k-form-fieldset">
+            <legend class="k-form-legend">New Creature Data</legend>
+            <kendo-formfield>
+                <kendo-label>Creature Name</kendo-label>
+                    <input formControlName="creatureName" kendoTextBox #creatureName required>
+                    <kendo-formerror>Error: Creature Name is required</kendo-formerror>
+            </kendo-formfield>
+
+            <kendo-formfield>
+                <kendo-label>Race</kendo-label>
+                    <kendo-autocomplete formControlName="race" [data]="raceNames" #race required></kendo-autocomplete>
+                    <kendo-formerror>Error: Creature Race is required</kendo-formerror>
+            </kendo-formfield>
+
+            <kendo-formfield>
+                <kendo-label>Background</kendo-label>
+                    <kendo-autocomplete formControlName="background" [data]="backgroundNames" #background required></kendo-autocomplete>
+                    <kendo-formerror>Error: Creature Background is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Creature Type</kendo-label>
+                    <kendo-autocomplete formControlName="creatureType" [data]="creatureTypeNames" #creatureType required></kendo-autocomplete>
+                    <kendo-formerror>Error: Creature Type is required</kendo-formerror>
+            </kendo-formfield>
+
+            <kendo-formfield>
+                <kendo-label>Creature Size</kendo-label>
+                    <kendo-autocomplete formControlName="creatureSize" [data]="creatureSizeNames" #creatureSize required></kendo-autocomplete>
+                    <kendo-formerror>Error: Creature Size is required</kendo-formerror>
+            </kendo-formfield>
+
+            <kendo-formfield>
+                <kendo-label>Armor Class</kendo-label>
+                    <kendo-numerictextbox formControlName="armorClass" #armorClass required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Armor Class is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Armor Class Type</kendo-label>
+                <kendo-textbox formControlName="acType" #acType></kendo-textbox>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Challenge Rating</kendo-label>
+                <kendo-numerictextbox formControlName="challengeRating" #challengeRating></kendo-numerictextbox>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Max Hitpoints</kendo-label>
+                    <kendo-numerictextbox formControlName="maxHitpoints" #maxHitpoints required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Max Hitpoints are required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Speed</kendo-label>
+                    <kendo-numerictextbox formControlName="speed" #speed required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Speed is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Flying Speed</kendo-label>
+                    <kendo-numerictextbox formControlName="flySpeed" #flySpeed required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Fly Speed is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Climb Speed</kendo-label>
+                    <kendo-numerictextbox formControlName="climbSpeed" #climbSpeed required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Speed is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Swim Speed</kendo-label>
+                    <kendo-numerictextbox formControlName="swimSpeed" #swimSpeed required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Swim Speed is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Strength Score</kendo-label>
+                    <kendo-numerictextbox formControlName="strScore" #strScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Strength Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Dexterity Score</kendo-label>
+                    <kendo-numerictextbox formControlName="dexScore" #dexScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Dexterity Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Constitution Score</kendo-label>
+                    <kendo-numerictextbox formControlName="conScore" #conScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Constitution Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Intelligence Score</kendo-label>
+                    <kendo-numerictextbox formControlName="intScore" #intScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Intelligence Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Wisdom Score</kendo-label>
+                    <kendo-numerictextbox formControlName="wisScore" #wisScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Wisdom Score is required</kendo-formerror>
+            </kendo-formfield>
+            
+            <kendo-formfield>
+                <kendo-label>Charisma Score</kendo-label>
+                    <kendo-numerictextbox formControlName="chaScore" #chaScore required></kendo-numerictextbox>
+                    <kendo-formerror>Error: Charisma Score is required</kendo-formerror>
+            </kendo-formfield>
+
+        </fieldset>
+    </form>
+    <button kendoButton (click)="submitCreature()">Submit</button>
+    <button kendoButton (click)="leaveNewCreatureMode()">Cancel</button>
+</div>
+
+<button (click)="enterNewCreatureMode()">New Creature</button>

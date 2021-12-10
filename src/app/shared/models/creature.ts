@@ -26,6 +26,10 @@ export class Creature {
     passed_death_saves: Number;
     created_by: Number;
     created_date: Date;
-    last_updated_by: Date;
+    last_updated_by: Number;
     last_updated_date: Date;
+
+    Creature(creature: Creature) {
+
+    }
 }

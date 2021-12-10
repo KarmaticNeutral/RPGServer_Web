@@ -6,20 +6,25 @@ import { AppComponent } from './app.component';
 import { GridModule } from '@progress/kendo-angular-grid';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+import { LabelModule } from '@progress/kendo-angular-label';
+import { InputsModule } from '@progress/kendo-angular-inputs';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     GridModule,
     HttpClientModule,
-    BrowserAnimationsModule
-  ],
-  exports: [
-    HttpClientModule,
+    BrowserAnimationsModule,
+    DropDownsModule,
+    LabelModule,
+    InputsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
